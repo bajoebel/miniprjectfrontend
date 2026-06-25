@@ -1,0 +1,39 @@
+import axios from "axios";
+const api = import.meta.env.VITE_API_URL
+const API_URL = `${api}/api/patients`;
+
+const authHeader = () => {
+  return {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  };
+};
+
+export const getPatients = async (page = 1, limit = 10, keyword = "") => {
+  return axios.get(
+    `${API_URL}?page=${page}&limit=${limit}&keyword=${keyword}`,
+    authHeader(),
+  );
+};
+
+export const getPatientById = async (id) => {
+  return axios.get(`${API_URL}/${id}`, authHeader());
+};
+export const createPatient = async (data) => {
+  return axios.post(API_URL, data, authHeader());
+};
+
+export const updatePatient = async (id, data) => {
+  return axios.put(
+    `${API_URL}/${id}`,
+
+    data,
+
+    authHeader(),
+  );
+};
+
+export const deletePatient = async (id) => {
+  return axios.delete(`${API_URL}/${id}`, authHeader());
+};
