@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from "vue";
-
 import Card from "primevue/card";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -18,7 +17,6 @@ const payments = ref([]);
 
 const loadData = async () => {
   loading.value = true;
-
   try {
     const res = await getData();
 

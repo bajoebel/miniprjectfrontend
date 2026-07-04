@@ -33,13 +33,11 @@ const routes = [
   {
     path: "/",
     component: MainLayout,
-
     children: [
       {
         path: "dashboard",
         component: Dashboard,
       },
-
       {
         path: "patients",
         component: Patient,
@@ -107,6 +105,11 @@ const routes = [
           import(
             "../views/payment/PaymentDetail.vue"
           ),
+      },
+      {
+        path:"/report/visit",
+        name:"report-visit",
+        component:()=>import("../views/report/VisitReport.vue")
       },
       // {
       //   path: "/service/:id",

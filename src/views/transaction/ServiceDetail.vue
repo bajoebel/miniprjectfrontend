@@ -8,6 +8,9 @@ import Textarea from "primevue/textarea";
 import Avatar from "primevue/avatar";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
+import AutoComplete from "primevue/autocomplete";
+import { searchICD10 } from "../../services/icd10Service";
+
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useRoute, useRouter } from "vue-router";
@@ -22,6 +25,8 @@ const route = useRoute();
 const router = useRouter();
 const selectedRegister = ref(null);
 const listMedicine = ref([]);
+const listICD10 = ref([]);
+const selectedICD10 = ref(null);
 const selectedMedicine = ref(null);
 const listTindakan = ref([]);
 const selectedTindakan=ref(null);
@@ -49,11 +54,26 @@ const rme = ref({
 
   diagnosis: {
     diagnosis: "",
+    icd10: {
+      icd10_id: null,
+      code: "",
+      name: "",
+    },
   },
 
   penggunaan_obat: [],
   tindakan: [],
 });
+
+
+const searchDiagnosis = async (event) => {
+  try {
+    const res = await searchICD10(event.query);
+    listICD10.value = res.data.response;
+  } catch (err) {
+    console.error(err);
+  }
+};
 const loadMasterData = async () => {
   try {
     const medicineRes = await getMedicines();
@@ -124,7 +144,15 @@ const selectTindakan = (row) => {
   row.unit_price = tindakan.amount
   row.subtotal = row.quantity * row.unit_price;
 };
+const selectDiagnosis = (event) => {
+  const item = event.value;
 
+  rme.value.diagnosis.icd10 = {
+    icd10_id: item._id,
+    code: item.code,
+    name: item.name,
+  };
+};
 const updateMedicineSubtotal = (row) => {
   row.subtotal = row.quantity * row.unit_price;
 };
@@ -395,7 +423,24 @@ onMounted(async () => {
 
             <!-- DIAGNOSIS -->
             <TabPanel header="Diagnosis">
-              <Textarea v-model="rme.diagnosis.diagnosis" class="w-full" />
+              <div class="grid">
+                <div class="col-12 mb-3">
+                  <label>Diagnosis</label>
+                  <AutoComplete
+                    v-model="selectedICD10"
+                    :suggestions="listICD10"
+                    optionLabel="name"
+                    dropdown
+                    forceSelection
+                    @complete="searchDiagnosis"
+                    @item-select="selectDiagnosis"
+                />
+                </div>
+                <div class="col-12 mb-3">
+                  <label>Deskripsi Diagnosis</label>
+                  <Textarea v-model="rme.diagnosis.diagnosis" class="w-full" />
+                </div>
+              </div>
             </TabPanel>
 
             <!-- RESEP -->
